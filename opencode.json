@@ -1,0 +1,8 @@
+{
+  "mcp": {
+    "mentraos": {
+      "type": "remote",
+      "url": "https://docs.mentraglass.com/mcp"
+    }
+  }
+}
