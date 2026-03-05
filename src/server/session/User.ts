@@ -1,6 +1,5 @@
 import { AppSession } from "@mentra/sdk";
 import { StorageManager } from "../manager/StorageManager";
-import { InputManager } from "../manager/InputManager";
 
 /**
  * User — per-user state container.
@@ -16,18 +15,13 @@ export class User {
   /** User preferences via MentraOS Simple Storage */
   storage: StorageManager;
 
-  /** Button presses and touchpad gestures */
-  input: InputManager;
-
   constructor(public readonly userId: string) {
     this.storage = new StorageManager(this);
-    this.input = new InputManager(this);
   }
 
   /** Wire up a glasses connection — sets up all event listeners */
   setAppSession(session: AppSession): void {
     this.appSession = session;
-    this.input.setup(session);
     console.log(`📱 Session ready for ${this.userId}`);
   }
 
