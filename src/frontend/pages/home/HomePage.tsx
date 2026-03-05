@@ -7,7 +7,6 @@ interface HomePageProps {
 }
 
 export default function HomePage({ userId }: HomePageProps) {
-  const [apiKey, setApiKey] = useState("");
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,7 +16,6 @@ export default function HomePage({ userId }: HomePageProps) {
       .then((res) => res.json())
       .then((data) => {
         if (data.apiKey) {
-          setApiKey(data.apiKey);
           setApiKeyInput(data.apiKey);
         }
       })
@@ -26,7 +24,6 @@ export default function HomePage({ userId }: HomePageProps) {
   }, [userId]);
 
   const handleSetApiKey = (newApiKey: string) => {
-    setApiKey(newApiKey);
     fetch("/api/fireboard-api-key", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
