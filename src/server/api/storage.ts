@@ -1,8 +1,8 @@
 import type { Context } from "hono";
 import { sessions } from "../manager/SessionManager";
 
-/** GET /theme-preference */
-export async function getThemePreference(c: Context) {
+/** GET /fireboard-api-key */
+export async function getApiKey(c: Context) {
   const userId = c.req.query("userId");
 
   if (!userId) return c.json({ error: "userId is required" }, 400);
@@ -13,20 +13,20 @@ export async function getThemePreference(c: Context) {
   }
 
   try {
-    const theme = await user.storage.getTheme();
-    return c.json({ theme, userId });
+    const apiKey = await user.storage.getApiKey();
+    return c.json({ apiKey, userId });
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }
 }
 
-/** POST /theme-preference */
-export async function setThemePreference(c: Context) {
-  const { userId, theme } = await c.req.json();
+/** POST /fireboard-api-key */
+export async function setApiKey(c: Context) {
+  const { userId, apiKey } = await c.req.json();
 
   if (!userId) return c.json({ error: "userId is required" }, 400);
-  if (!theme || (theme !== "dark" && theme !== "light")) {
-    return c.json({ error: 'theme must be "dark" or "light"' }, 400);
+  if (!apiKey || typeof apiKey !== "string") {
+    return c.json({ error: "apiKey is required" }, 400);
   }
 
   const user = sessions.get(userId);
@@ -35,8 +35,8 @@ export async function setThemePreference(c: Context) {
   }
 
   try {
-    await user.storage.setTheme(theme);
-    return c.json({ success: true, theme, userId });
+    await user.storage.setApiKey(apiKey);
+    return c.json({ success: true, apiKey, userId });
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }

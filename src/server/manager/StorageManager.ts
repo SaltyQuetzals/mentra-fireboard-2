@@ -6,24 +6,24 @@ import type { User } from "../session/User";
 export class StorageManager {
   constructor(private user: User) {}
 
-  /** Get the user's theme preference, defaults to "light" */
-  async getTheme(): Promise<"dark" | "light"> {
+  /** Get the user's Fireboard API key, defaults to empty string */
+  async getApiKey(): Promise<string> {
     const session = this.user.appSession;
-    if (!session) return "light";
+    if (!session) return "";
 
     try {
-      const theme = await session.simpleStorage.get("theme");
-      if (theme === "dark" || theme === "light") return theme;
-      return "light";
+      const apiKey = await session.simpleStorage.get("fireboardApiKey");
+      if (typeof apiKey === "string") return apiKey;
+      return "";
     } catch {
-      return "light";
+      return "";
     }
   }
 
-  /** Save the user's theme preference */
-  async setTheme(theme: "dark" | "light"): Promise<void> {
+  /** Save the user's Fireboard API key */
+  async setApiKey(apiKey: string): Promise<void> {
     const session = this.user.appSession;
     if (!session) throw new Error("No active glasses session");
-    await session.simpleStorage.set("theme", theme);
+    await session.simpleStorage.set("fireboardApiKey", apiKey);
   }
 }
