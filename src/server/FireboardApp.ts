@@ -7,19 +7,17 @@
 
 import { AppServer, AppSession, ToolCall } from "@mentra/sdk";
 import { sessions } from "./manager/SessionManager";
-import { FireboardClient } from "./fireboard/fireboard_client";
 import {
-  retrieveRealtimeTemperatureOfDevice,
-  retrieveSessionChartData,
-  listAllSessions,
-} from "./fireboard/api";
-import type { ChartData } from "./fireboard/api_types";
+  getCurrentTemperatures,
+  getTemperatureBehaviorOverDuration,
+  getTemperatureBehaviorBetween,
+} from "./fireboard/tool_handlers";
 import {
+  ToolId,
   getCurrentTemperaturesSchema,
   getTemperatureBehaviorOverDurationSchema,
   getTemperatureBehaviorBetweenSchema,
 } from "./fireboard/tools";
-import { z } from "zod";
 
 export interface FireboardAppConfig {
   packageName: string;
@@ -62,5 +60,40 @@ export class FireboardApp extends AppServer {
     } catch (err) {
       console.error(`Error during session cleanup for ${userId}:`, err);
     }
+  }
+
+  protected async onToolCall(toolCall: ToolCall): Promise<string | undefined> {
+    const { toolId, toolParameters, userId } = toolCall;
+
+    if (toolId === ToolId.GetCurrentTemperatures) {
+      const parsed = getCurrentTemperaturesSchema.safeParse(toolParameters);
+      if (!parsed.success) {
+        return `Invalid parameters: ${parsed.error.issues.map((e) => e.message).join(", ")}`;
+      }
+
+      return getCurrentTemperatures(userId);
+    }
+
+    if (toolId === ToolId.GetTemperatureBehaviorOverDuration) {
+      const parsed = getTemperatureBehaviorOverDurationSchema.safeParse(toolParameters);
+      if (!parsed.success) {
+        return `Invalid parameters: ${parsed.error.issues.map((e) => e.message).join(", ")}`;
+      }
+
+      const { duration } = parsed.data;
+      return getTemperatureBehaviorOverDuration(userId, duration);
+    }
+
+    if (toolId === ToolId.GetTemperatureBehaviorBetween) {
+      const parsed = getTemperatureBehaviorBetweenSchema.safeParse(toolParameters);
+      if (!parsed.success) {
+        return `Invalid parameters: ${parsed.error.issues.map((e) => e.message).join(", ")}`;
+      }
+
+      const { start, end } = parsed.data;
+      return getTemperatureBehaviorBetween(userId, start, end);
+    }
+
+    return undefined;
   }
 }
