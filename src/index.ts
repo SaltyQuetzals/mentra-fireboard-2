@@ -5,7 +5,7 @@
  * and Hono-based AppServer for the backend + MentraOS SDK.
  */
 
-import { CameraApp } from "./server/CameraApp";
+import { FireboardApp } from "./server/FireboardApp";
 import { api } from "./server/routes/routes";
 import { createMentraAuthRoutes } from "@mentra/sdk";
 import indexHtml from "./frontend/index.html";
@@ -33,7 +33,7 @@ console.log(`   Port: ${PORT}`);
 console.log("");
 
 // Initialize App (extends Hono via AppServer)
-const app = new CameraApp({
+const app = new FireboardApp({
   packageName: PACKAGE_NAME,
   apiKey: API_KEY,
   port: PORT,
@@ -57,7 +57,7 @@ app.route("/api", api);
 // Start the SDK app (registers SDK routes, checks version)
 await app.start();
 
-console.log(`✅ Camera app running at http://localhost:${PORT}`);
+console.log(`✅ Fireboard app running at http://localhost:${PORT}`);
 console.log(`   • Webview: http://localhost:${PORT}`);
 console.log(`   • API: http://localhost:${PORT}/api/health`);
 console.log("");
@@ -104,7 +104,7 @@ console.log("");
 
 // Graceful shutdown
 const shutdown = async () => {
-  console.log("\n🛑 Shutting down Camera App...");
+  console.log("\n🛑 Shutting down Fireboard App...");
   await app.stop();
   console.log("👋 Goodbye!");
   process.exit(0);
